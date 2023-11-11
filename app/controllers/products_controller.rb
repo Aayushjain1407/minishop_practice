@@ -1,5 +1,6 @@
 class ProductsController < ApplicationController
-  before_action :set_product, only: %i[ show edit update destroy ]
+  before_action :set_product, only: %i[ show ]
+  before_action :set_seller_product, only: %i[ edit update destroy ]
   before_action :authenticate_user!, only: %i[ new create edit update destroy ]
 
   # GET /products or /products.json
@@ -59,7 +60,12 @@ class ProductsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+    def set_seller_product
+      @product = current_user.products.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      redirect_to :root, alert: "Product not found" and return
+    end
+
     def set_product
       @product = Product.find(params[:id])
     end
