@@ -1,7 +1,9 @@
 class ProductsController < ApplicationController
-  before_action :set_product, only: %i[ show ]
+  before_action :set_product, only: %i[ show buy ]
   before_action :set_seller_product, only: %i[ edit update destroy ]
-  before_action :authenticate_user!, only: %i[ new create edit update destroy ]
+  before_action :authenticate_user!, only: %i[ new create edit update destroy buy ]
+
+  protect_from_forgery except: :webhook
 
   # GET /products or /products.json
   def index
@@ -10,6 +12,46 @@ class ProductsController < ApplicationController
 
   # GET /products/1 or /products/1.json
   def show
+  end
+
+  def buy
+    session = Stripe::Checkout::Session.create({
+      client_reference_id: @product.id,
+      line_items: [{
+        price: 'price_0OKcMroDMzScYFKjPjlHeE3J',
+        quantity: 1
+      }],
+      customer_email: current_user&.email,
+      mode: 'payment',
+      success_url: product_url(@product),
+      cancel_url: product_url(@product),
+    })
+    redirect_to session.url, status: 303, allow_other_host: true
+  end
+
+  def webhook
+    event = nil
+
+    begin
+      sig_header = request.env['HTTP_STRIPE_SIGNATURE']
+      payload = request.body.read
+      event = Stripe::Webhook.construct_event(payload, sig_header, ENV['STRIPE_WEBHOOK_ENDPOINT_SECRET'])
+    rescue JSON::ParserError => e
+      # Invalid payload
+      render json: { status: 400, error: e.message } and return
+    rescue Stripe::SignatureVerificationError => e
+      # Invalid signature
+      render json: { status: 400, error:  e.message } and return
+    end
+
+    if event['type'] == 'checkout.session.completed'
+      customer_email = event.data.object.customer_email
+      product_id = event.data.object.client_reference_id
+      customer = User.find_by(email: customer_email)
+      purchase = customer.purchases.create(product_id: product_id)
+    end
+
+    render json: { status: 200 }
   end
 
   # GET /products/new
