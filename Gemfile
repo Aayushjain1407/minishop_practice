@@ -74,3 +74,5 @@ end
 gem "devise", "~> 4.8"
 
 gem "stripe", "~> 10.6"
+
+gem "dockerfile-rails", ">= 1.6", :group => :development
