@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   resources :purchases
   resources :products do
     post "buy", on: :member
+    get "reviews", on: :member
   end
 
   post "/webhook", to: "products#webhook"

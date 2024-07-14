@@ -1,7 +1,13 @@
-<div>
-  <% if @product.seller == current_user %>
-    <%= link_to "Edit this product", edit_product_path(@product), class: "underline" %>
-  <% end %>
-</div>
+<%= turbo_frame_tag @product do %>
+  <div>
+    <% if @product.seller == current_user %>
+      <%= link_to "Edit this product", edit_product_path(@product), class: "underline" %>
+    <% end %>
+  </div>
 
-<%= render @product %>
+  <%= turbo_stream.update "flash", partial: "shared/flash" %>
+
+  <%= render @product %>
+<% end %>
+
+

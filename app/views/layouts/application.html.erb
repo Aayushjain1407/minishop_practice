@@ -33,12 +33,23 @@
 
     <main>
       <div class="mx-auto max-w-6xl py-12 mx-auto">
-        <div class="">
-          <p class="notice"><%= notice %></p>
-          <p class="alert"><%= alert %></p>
+        <div id="flash">
+          <%= render "shared/flash" %>
         </div>
         <%= yield %>
       </div>
     </main>
   </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
