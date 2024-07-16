@@ -10,6 +10,8 @@ class User < ApplicationRecord
   #Buyer
   has_many :purchases, foreign_key: :buyer_id, dependent: :destroy
 
+  has_many :reviews, dependent: :destroy
+
   def has_purchased?(product)
     purchases.where(product_id: product.id).any?
   end

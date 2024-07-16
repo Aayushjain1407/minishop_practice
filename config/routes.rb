@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :reviews
   resources :purchases
   resources :products do
     post "buy", on: :member

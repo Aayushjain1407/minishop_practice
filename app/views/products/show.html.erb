@@ -10,4 +10,19 @@
   <%= render @product %>
 <% end %>
 
+<div id="reviews-container" class="my-6 py-20">
+  <h2 class="text-3xl font-bold">Reviews</h2>
+
+  <% if user_signed_in? %>
+    <p class="my-4 text-xl">Write a review</p>
+    <%= render partial: "reviews/form", 
+      locals: { review:  @new_review } %>
+  <% end %>
+
+  <%= turbo_frame_tag "reviews" do %>
+    <%= render @reviews %>
+  <% end %>
+</div>
+
+
 
