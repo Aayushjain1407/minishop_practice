@@ -19,6 +19,8 @@
       locals: { review:  @new_review } %>
   <% end %>
 
+  <%= turbo_stream_from @product %>
+
   <%= turbo_frame_tag "reviews" do %>
     <%= render @reviews %>
   <% end %>
