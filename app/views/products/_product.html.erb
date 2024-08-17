@@ -4,7 +4,7 @@
       <div class="relative h-96">
         <div style="display: block; overflow: hidden; position: absolute; inset: 0px; box-sizing: border-box; margin: 0px;">
           <% if product.images.attached? %>
-            <%= image_tag product.images.first, id: "displayed-image", class: "transform duration-500 ease-in-out hover:scale-110", style:"position:absolute;top:0;left:0;bottom:0;right:0;box-sizing:border-box;padding:0;border:none;margin:auto;display:block;width:0;height:0;min-width:100%;max-width:100%;min-height:100%;max-height:100%",
+            <%= image_tag product.images.first, id: "displayed-image", class: "transform duration-500 ease-in-out hover:scale-110", style:"",
             data: { "gallery-target": "display" } %>
           <% end %>
         </div>
