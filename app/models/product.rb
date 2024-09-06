@@ -8,4 +8,15 @@ class Product < ApplicationRecord
   has_many_attached :images
 
   has_rich_text :description
+
+  after_save :set_stripe_price_id, if: -> { stripe_price_id.nil? || saved_change_to_price? }
+
+  def set_stripe_price_id
+    stripe_price = Stripe::Price.create({
+      currency: 'usd',
+      unit_amount: (self.price * 100).to_i,
+      product_data: {name: self.title },
+    })
+    self.update(stripe_price_id: stripe_price.id)
+  end
 end

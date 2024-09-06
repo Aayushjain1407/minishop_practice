@@ -20,7 +20,7 @@ class ProductsController < ApplicationController
     session = Stripe::Checkout::Session.create({
       client_reference_id: @product.id,
       line_items: [{
-        price: 'price_0OKcMroDMzScYFKjPjlHeE3J',
+        price: @product.stripe_price_id,
         quantity: 1
       }],
       customer_email: current_user&.email,
