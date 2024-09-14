@@ -28,9 +28,16 @@
         <h1 class="leading-relaxed font-extrabold text-3xl text-palette-primary py-2 sm:py-4">
           <%= product.title %>
         </h1>
-        <div class="my-4">
-          <%=link_to "Reviews", "#reviews-container", class: "font-light text-palette-primary text-lg",
-            data: { turbo: false } %>
+
+        <div class="group block flex-shrink-0">
+          <div class="flex items-center text-sm font-medium text-gray-700 group-hover:text-gray-900">
+            <div>
+              <%= render partial: "shared/user_photo", locals: { user: product.seller } %>
+            </div>
+            <div class="ml-3 mt-3">
+              <%= product.seller.name %>
+            </div>
+          </div>
         </div>
 
         <div class="text-xl text-palette-primary font-medium py-4 px-1">
@@ -38,7 +45,6 @@
           </span>
         </div>
       </div>
-
 
       <% if current_user&.has_purchased?(product) %>
         <p>You already own this product!</p>

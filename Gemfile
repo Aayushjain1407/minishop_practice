@@ -78,3 +78,7 @@ gem "stripe", "~> 10.6"
 gem "dockerfile-rails", ">= 1.6", :group => :development
 
 gem "tailwindcss-rails", "~> 2.4"
+
+group :development, :test do
+  gem 'faker'
+end
