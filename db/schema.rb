@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_07_110850) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_14_125648) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -52,6 +52,32 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_07_110850) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "cart_items", force: :cascade do |t|
+    t.bigint "cart_id", null: false
+    t.bigint "product_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cart_id"], name: "index_cart_items_on_cart_id"
+    t.index ["product_id"], name: "index_cart_items_on_product_id"
+  end
+
+  create_table "carts", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_carts_on_user_id"
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "status", default: 0, null: false
+    t.decimal "total_amount", precision: 10, scale: 2, default: "0.0"
+    t.datetime "status_changed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
   create_table "products", force: :cascade do |t|
     t.string "title"
     t.decimal "price", precision: 6, scale: 2, default: "0.0"
@@ -67,7 +93,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_07_110850) do
     t.bigint "buyer_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "order_id"
     t.index ["buyer_id"], name: "index_purchases_on_buyer_id"
+    t.index ["order_id"], name: "index_purchases_on_order_id"
     t.index ["product_id"], name: "index_purchases_on_product_id"
   end
 
@@ -96,7 +124,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_07_110850) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "cart_items", "carts"
+  add_foreign_key "cart_items", "products"
+  add_foreign_key "carts", "users"
+  add_foreign_key "orders", "users"
   add_foreign_key "products", "users", column: "seller_id"
+  add_foreign_key "purchases", "orders"
   add_foreign_key "purchases", "users", column: "buyer_id"
   add_foreign_key "reviews", "products"
   add_foreign_key "reviews", "users"

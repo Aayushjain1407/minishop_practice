@@ -1,0 +1,17 @@
+<div id="<%= dom_id cart_item %>">
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Cart:</strong>
+    <%= cart_item.cart_id %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Product:</strong>
+    <%= cart_item.product_id %>
+  </p>
+
+  <% if action_name != "show" %>
+    <%= link_to "Show this cart item", cart_item, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+    <%= link_to "Edit this cart item", edit_cart_item_path(cart_item), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
+    <hr class="mt-6">
+  <% end %>
+</div>

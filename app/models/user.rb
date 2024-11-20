@@ -14,6 +14,9 @@ class User < ApplicationRecord
 
   has_many :reviews, dependent: :destroy
 
+  has_one :cart
+  has_many :orders
+
   def has_purchased?(product)
     purchases.where(product_id: product.id).any?
   end
