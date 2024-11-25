@@ -1,12 +1,53 @@
-<div id="<%= dom_id cart %>">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">User:</strong>
-    <%= cart.user_id %>
-  </p>
+<div class="container mx-auto mb-20 min-h-screen">
+  <h1 class="leading-relaxed font-primary font-extrabold text-4xl text-center text-palette-primary mt-4 py-2 sm:py-4">Your Cart</h1>
+  <div class="min-h-80 max-w-2xl my-4 sm:my-8 mx-auto w-full">
+    <table class="mx-auto">
+      <thead>
+        <tr class="uppercase text-xs sm:text-sm text-palette-primary border-b border-palette-light">
+          <th class="font-primary font-normal px-6 py-4">Product</th>
+          <th class="font-primary font-normal px-6 py-4 hidden sm:table-cell">Price</th>
+          <th class="font-primary font-normal px-6 py-4">Remove</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-palette-lighter">
+        <% @cart.cart_items.each do |cart_item| %>
+          <tr class="text-sm sm:text-base text-gray-600 text-center">
+            <td class="font-primary font-medium px-4 sm:px-6 py-4 flex items-center">
+              <%= link_to cart_item.product.title, cart_item.product, class: "pt-1 hover:text-palette-dark" %>
+              </a>
+            </td>
+            <td class="font-primary text-base font-light px-4 sm:px-6 py-4 hidden sm:table-cell">
+              $<span class="text-lg"><%= cart_item.product.price %></span>
+            </td>
+            <td class="font-primary font-medium px-4 sm:px-6 py-4">
+              <%= button_to cart_item_path(cart_item),
+                method: :delete do %>
+                <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="times" class="svg-inline--fa fa-times fa-w-11 w-8 h-8 text-palette-primary border border-palette-primary p-1 hover:bg-palette-lighter" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path fill="currentColor" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
 
-  <% if action_name != "show" %>
-    <%= link_to "Show this cart", cart, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= link_to "Edit this cart", edit_cart_path(cart), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
-    <hr class="mt-6">
-  <% end %>
+        <tr class="text-center">
+          <td class="font-primary text-base text-gray-600 font-semibold uppercase px-4 sm:px-6 py-4">Total</td>
+          <td class="font-primary text-lg text-palette-primary font-medium px-4 sm:px-6 py-4">
+            $<span class="text-xl"><%= @cart.total_amount %></span>
+          </td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="max-w-sm mx-auto space-y-4 px-2">
+    <%= button_to checkout_cart_path(@cart),
+      disabled: @cart.is_empty?,
+      class: "bg-palette-primary text-white text-lg font-primary font-semibold pt-2 pb-1 leading-relaxed flex  justify-center items-center focus:ring-1 focus:ring-palette-light focus:outline-none w-full hover:bg-palette-dark rounded-sm disabled:opacity-50 disabled:cursor-not-allowed" do %>
+      Check Out
+      <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="arrow-right" class="svg-inline--fa fa-arrow-right fa-w-14 w-4 ml-2 inline-flex" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M190.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L441 239c9.4 9.4 9.4 24.6 0 33.9L246.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L311.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h287.4L190.9 101.2c-9.8-9.3-10-24.8-.4-34.3z"></path></svg>
+    <% end %>
+    <a aria-label="continue-shopping" class="border border-palette-primary text-palette-primary text-lg font-primary font-semibold pt-2 pb-1 leading-relaxed flex  justify-center items-center focus:ring-1 focus:ring-palette-light focus:outline-none w-full hover:bg-palette-lighter rounded-sm" href="/">
+      <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="arrow-left" class="svg-inline--fa fa-arrow-left fa-w-14 w-4 mr-2 inline-flex" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M257.5 445.1l-22.2 22.2c-9.4 9.4-24.6 9.4-33.9 0L7 273c-9.4-9.4-9.4-24.6 0-33.9L201.4 44.7c9.4-9.4 24.6-9.4 33.9 0l22.2 22.2c9.5 9.5 9.3 25-.4 34.3L136.6 216H424c13.3 0 24 10.7 24 24v32c0 13.3-10.7 24-24 24H136.6l120.5 114.8c9.8 9.3 10 24.8.4 34.3z"></path></svg>
+      Continue shopping
+    </a>
+  </div>
 </div>

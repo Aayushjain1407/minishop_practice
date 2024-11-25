@@ -30,32 +30,6 @@ class ProductsController < ApplicationController
     })
     redirect_to session.url, status: 303, allow_other_host: true
   end
-
-  def webhook
-    event = nil
-
-    begin
-      sig_header = request.env['HTTP_STRIPE_SIGNATURE']
-      payload = request.body.read
-      event = Stripe::Webhook.construct_event(payload, sig_header, ENV['STRIPE_WEBHOOK_ENDPOINT_SECRET'])
-    rescue JSON::ParserError => e
-      # Invalid payload
-      render json: { status: 400, error: e.message } and return
-    rescue Stripe::SignatureVerificationError => e
-      # Invalid signature
-      render json: { status: 400, error:  e.message } and return
-    end
-
-    if event['type'] == 'checkout.session.completed'
-      customer_email = event.data.object.customer_email
-      product_id = event.data.object.client_reference_id
-      customer = User.find_by(email: customer_email)
-      purchase = customer.purchases.create(product_id: product_id)
-    end
-
-    render json: { status: 200 }
-  end
-
   # GET /products/new
   def new
     @product = current_user.products.new

@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
   resources :orders
   resources :cart_items
-  resources :carts
+  resource :cart, only: [:show] do
+    post :checkout, on: :member
+  end
   resources :reviews
   resources :purchases
   resources :products do
@@ -9,7 +11,7 @@ Rails.application.routes.draw do
     get "reviews", on: :member
   end
 
-  post "/webhook", to: "products#webhook"
+  post "/webhooks/stripe", to: "webhooks#stripe"
 
   devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

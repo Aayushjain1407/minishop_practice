@@ -18,6 +18,6 @@ class User < ApplicationRecord
   has_many :orders
 
   def has_purchased?(product)
-    purchases.where(product_id: product.id).any?
+    orders.fulfilled.joins(:purchases).exists?(purchases: { product_id: product.id })
   end
 end

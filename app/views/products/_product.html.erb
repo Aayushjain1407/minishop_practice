@@ -50,9 +50,7 @@
         <p>You already own this product!</p>
       <% else %>
         <div class="w-full">
-          <%= form_with model: product, url: buy_product_path(product), method: :post do %>
-            <%= submit_tag "Buy now", data: { turbo: false }, class: "pt-3 pb-2 bg-palette-primary text-white w-full mt-2 rounded-sm font-primary font-semibold text-xl flex justify-center items-baseline  hover:bg-palette-dar k cursor-pointer", "aria-label": "cart-button" %>
-          <% end %>
+          <%= render partial: "shared/add_to_cart_button", locals: { product: product } %>
         </div>
       <% end %>
     </div>

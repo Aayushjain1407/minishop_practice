@@ -1,70 +1,55 @@
 class CartsController < ApplicationController
-  before_action :set_cart, only: %i[ show edit update destroy ]
-
-  # GET /carts or /carts.json
-  def index
-    @carts = Cart.all
-  end
+  before_action :set_cart
+  before_action :authenticate_user!
+  before_action :ensure_cart_not_empty, only: [:checkout]
 
   # GET /carts/1 or /carts/1.json
   def show
   end
 
-  # GET /carts/new
-  def new
-    @cart = Cart.new
-  end
-
-  # GET /carts/1/edit
-  def edit
-  end
-
-  # POST /carts or /carts.json
-  def create
-    @cart = Cart.new(cart_params)
-
-    respond_to do |format|
-      if @cart.save
-        format.html { redirect_to cart_url(@cart), notice: "Cart was successfully created." }
-        format.json { render :show, status: :created, location: @cart }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @cart.errors, status: :unprocessable_entity }
+  def checkout
+    order = current_user.orders.create!(
+      status: :pending,
+      total_amount: @cart.total_amount,
+      purchases_attributes: @cart.products.map do |product|
+        {
+          product: product,
+          buyer: current_user
+        }
       end
-    end
-  end
+    )
 
-  # PATCH/PUT /carts/1 or /carts/1.json
-  def update
-    respond_to do |format|
-      if @cart.update(cart_params)
-        format.html { redirect_to cart_url(@cart), notice: "Cart was successfully updated." }
-        format.json { render :show, status: :ok, location: @cart }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @cart.errors, status: :unprocessable_entity }
-      end
-    end
-  end
+    session = Stripe::Checkout::Session.create({
+      client_reference_id: order.id,
+      line_items: @cart.products.map { | product|
+        {
+          price: product.stripe_price_id,
+          quantity: 1
+        }
+      },
+      customer_email: current_user&.email,
+      mode: 'payment',
+      success_url: order_url(order),
+      cancel_url: cart_url,
+    })
+    redirect_to session.url, status: 303, allow_other_host: true
 
-  # DELETE /carts/1 or /carts/1.json
-  def destroy
-    @cart.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to carts_url, notice: "Cart was successfully destroyed." }
-      format.json { head :no_content }
-    end
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_cart
-      @cart = Cart.find(params[:id])
+      @cart = current_user.cart
     end
 
     # Only allow a list of trusted parameters through.
     def cart_params
       params.require(:cart).permit(:user_id)
+    end
+
+    def ensure_cart_not_empty
+      if @cart.is_empty?
+        redirect_to cart_path, alert: "Your cart is empty"
+      end
     end
 end

@@ -3,6 +3,8 @@ class Order < ApplicationRecord
   has_many :purchases
   has_many :products, through: :purchases
 
+  accepts_nested_attributes_for :purchases
+
   enum status: {
     pending: 0,
     processing: 1,
@@ -10,5 +12,7 @@ class Order < ApplicationRecord
     cancelled: 3,
     refunded: 4
   }
+
+  scope :fulfilled, -> { where(status: :fulfilled) }
   
 end
