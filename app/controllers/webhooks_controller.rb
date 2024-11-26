@@ -1,5 +1,5 @@
 class WebhooksController < ApplicationController
-  protect_from_forgery except: :webhook
+  protect_from_forgery except: :stripe
 
   def stripe
     event = nil
@@ -24,7 +24,7 @@ class WebhooksController < ApplicationController
       if order
         order.fulfilled!
         customer.cart.empty!
-        OrderMailer.with(order_id: order_id).confirmation.deliver_later
+        SendOrderConfirmationJob.perform_later(order.id)
       end
     end
 
