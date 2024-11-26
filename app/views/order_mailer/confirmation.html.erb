@@ -1,0 +1,12 @@
+<h1>Order Confirmation #<%= @order.id %></h1>
+
+<p>Thank you for your order!</p>
+
+<h2>Order Details:</h2>
+<% @order.purchases.each do |purchase| %>
+  <div>
+    <%= purchase.product.title %> - $<%= purchase.product.price %>
+  </div>
+<% end %>
+
+<p>Total: $<%= @order.total_amount %></p>

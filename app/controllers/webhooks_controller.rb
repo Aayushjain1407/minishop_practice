@@ -24,6 +24,7 @@ class WebhooksController < ApplicationController
       if order
         order.fulfilled!
         customer.cart.empty!
+        OrderMailer.with(order_id: order_id).confirmation.deliver_later
       end
     end
 
