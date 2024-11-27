@@ -14,6 +14,9 @@ class Product < ApplicationRecord
 
   after_save :set_stripe_price_id, if: -> { stripe_price_id.nil? || saved_change_to_price? }
 
+  validates :title, presence: true
+  validates :price, presence: true, numericality: { greater_than: 0 }
+
   def set_stripe_price_id
     stripe_price = Stripe::Price.create({
       currency: 'usd',

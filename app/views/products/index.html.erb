@@ -16,6 +16,12 @@
         </div>
       </div>
       <div class="h-48 relative">
+        <% if product.seller.is_pro_seller? %>
+          <span class="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
+            PRO
+          </span>
+        <% end %>
+
         <div class="font-primary text-palette-primary text-2xl pt-4 px-4 font-semibold">
           <%= product.title %>
         </div>

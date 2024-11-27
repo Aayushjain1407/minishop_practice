@@ -35,6 +35,11 @@
               <%= render partial: "shared/user_photo", locals: { user: product.seller } %>
             </div>
             <div class="ml-3 mt-3">
+              <% if product.seller.is_pro_seller? %>
+                <span class="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
+                  PRO
+                </span>
+              <% end %>
               <%= product.seller.name %>
             </div>
           </div>
