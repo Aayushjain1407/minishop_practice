@@ -1,0 +1,96 @@
+<div class="max-w-2xl mx-auto p-6">
+  <div class="bg-white shadow rounded-lg p-6">
+    <h1 class="text-2xl font-bold mb-6">Pro Seller Subscription</h1>
+
+    <div class="space-y-6">
+      <%# Status Badge %>
+      <div class="flex items-center">
+        <span class="text-gray-700">Status:</span>
+        <span class="ml-2 px-3 py-1 rounded-full text-sm font-medium
+          <%= case @subscription.status
+              when 'active' then 'bg-green-100 text-green-800'
+              when 'canceled' then 'bg-red-100 text-red-800'
+              when 'past_due' then 'bg-yellow-100 text-yellow-800'
+              else 'bg-gray-100 text-gray-800'
+              end %>">
+          <%= @subscription.status.titleize %>
+        </span>
+      </div>
+
+      <%# Payment Details %>
+      <div class="border rounded-lg p-4 space-y-4 bg-gray-50">
+        <div class="flex justify-between">
+          <span class="text-gray-600">Amount:</span>
+          <span class="font-medium">$<%= @subscription.amount %>/month</span>
+        </div>
+
+        <div class="flex justify-between">
+          <span class="text-gray-600">Last payment:</span>
+          <span class="font-medium"><%= @last_payment.strftime("%B %d, %Y") %></span>
+        </div>
+
+        <% unless @stripe_subscription.cancel_at %>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Next payment:</span>
+            <span class="font-medium"><%= @next_payment.strftime("%B %d, %Y") %></span>
+          </div>
+        <% end %>
+      </div>
+
+      <%# Subscription Management %>
+      <div class="border-t pt-6">
+        <% if @subscription.active? %>
+          <% if @stripe_subscription.cancel_at %>
+            <div class="bg-red-100 p-4">
+              Your subscription is due for cancellation on 
+              <%= Time.at(@stripe_subscription.cancel_at).strftime("%B %d, %Y") %>.
+            </div>
+          <% else %>
+            <%= button_to subscription_path(@subscription), 
+                method: :delete,
+                class: "w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700",
+                data: { 
+                  turbo_confirm: "Are you sure you want to cancel your subscription? You'll lose access to Pro features at the end of your billing period."
+                } do %>
+              Cancel Subscription
+            <% end %>
+            <p class="text-sm text-gray-500 mt-2">
+              Your subscription will remain active until <%= @next_payment.strftime("%B %d, %Y") %>
+            </p>
+          <% end %>
+        <% elsif @subscription.canceled? %>
+          <div class="text-center">
+            <p class="text-gray-600 mb-4">
+              Your subscription is canceled and will end on <%= @next_payment.strftime("%B %d, %Y") %>
+            </p>
+            <%= link_to "Resubscribe", 
+                new_subscription_path, 
+                class: "bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <%# Payment History %>
+  <div class="mt-8 bg-white shadow rounded-lg p-6">
+    <h2 class="text-xl font-semibold mb-4">Payment History</h2>
+    <div class="space-y-4">
+      <% @invoices.data.each do |invoice| %>
+        <div class="flex justify-between items-center border-b pb-4">
+          <div>
+            <div class="font-medium">
+              <%= Time.at(invoice.created).strftime("%B %d, %Y") %>
+            </div>
+            <div class="text-sm text-gray-500">
+              <%= invoice.status.titleize %>
+            </div>
+          </div>
+          <div class="font-medium">
+            $<%= invoice.amount_paid / 100.0 %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div> 

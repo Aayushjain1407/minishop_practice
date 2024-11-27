@@ -1,6 +1,7 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  resources :subscriptions
   resources :orders
   resources :cart_items
   resource :cart, only: [:show] do
