@@ -1,7 +1,7 @@
 class Subscription < ApplicationRecord
   belongs_to :user
 
-  enum status: {
+  enum :status,
     incomplete: 'incomplete',
     incomplete_expired: 'incomplete_expired',
     trialing: 'trialing',
@@ -9,5 +9,5 @@ class Subscription < ApplicationRecord
     past_due: 'past_due',
     canceled: 'canceled',
     unpaid: 'unpaid'
-  }
+
 end
