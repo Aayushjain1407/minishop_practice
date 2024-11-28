@@ -3,8 +3,6 @@ class ProductsController < ApplicationController
   before_action :set_seller_product, only: %i[ edit update destroy ]
   before_action :authenticate_user!, only: %i[ new create edit update destroy buy ]
 
-  protect_from_forgery except: :webhook
-
   # GET /products or /products.json
   def index
     @products = Product.all

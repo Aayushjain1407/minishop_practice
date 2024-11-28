@@ -36,6 +36,8 @@ class WebhooksControllerTest < ActionDispatch::IntegrationTest
         ENV['STRIPE_WEBHOOK_ENDPOINT_SECRET'])
       .returns(event_data)
 
+    ActiveJob::Base.queue_adapter = :test
+
     assert_enqueued_with(job: SendOrderConfirmationJob,
       args: [@order.id]) do
       post webhooks_stripe_path,
