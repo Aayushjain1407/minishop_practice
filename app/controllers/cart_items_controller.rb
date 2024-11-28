@@ -22,7 +22,7 @@ class CartItemsController < ApplicationController
 
   # DELETE /cart_items/1 or /cart_items/1.json
   def destroy
-    @cart.remove(@cart_item.product)
+    current_cart.remove(@cart_item.product)
 
     respond_to do |format|
       format.html { redirect_to cart_url, notice: "Product removed from your cart." }
